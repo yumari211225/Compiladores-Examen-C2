@@ -1,1 +1,4 @@
-# Compiladores-Examen-C2
+.\venv\Scripts\Activate.ps1
+.\venv\Scripts\activate
+
+python app.py

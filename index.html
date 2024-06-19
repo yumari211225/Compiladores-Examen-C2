@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizador Léxico, Sintáctico, Semántico</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-900 text-gray-200">
+    <div class="mx-auto p-6 container">
+        <h2 class="mb-6 font-bold text-3xl text-center">Analizador Léxico, Sintáctico y Semántico </h2>
+        <form method="POST" class="mb-6">
+            <textarea name="code" rows="10" cols="50" class="border-gray-700 bg-gray-800 mb-4 p-3 border rounded w-full">{{ request.form.code if request.method == 'POST' else '' }}</textarea><br>
+            <input type="submit" value="Analizar" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white">
+        </form>
+        <div class="gap-6 grid grid-cols-1 result">
+            <div class="bg-gray-800 p-4 rounded AS">
+                <h2 class="mb-4 font-bold text-2xl">Análisis Sintáctico</h2>
+                <pre class="whitespace-pre-wrap">{{ syntax_result }}</pre>
+            </div>
+            <div class="bg-gray-800 p-4 rounded AL">
+                <h2 class="mb-4 font-bold text-2xl">Análisis Léxico</h2>
+                <table class="border-collapse w-full text-left">
+                    <thead>
+                        <tr>
+                            <th class="border-gray-700 px-4 py-2 border">Token</th>
+                            <th class="border-gray-700 px-4 py-2 border">Palabra reservada</th>
+                            <th class="border-gray-700 px-4 py-2 border">Identificador</th>
+                            <th class="border-gray-700 px-4 py-2 border">Número</th>
+                            <th class="border-gray-700 px-4 py-2 border">Símbolo</th>
+                            <th class="border-gray-700 px-4 py-2 border">Paréntesis izquierdo</th>
+                            <th class="border-gray-700 px-4 py-2 border">Paréntesis Derecho</th>
+                            <th class="border-gray-700 px-4 py-2 border">Llave izquierda</th>
+                            <th class="border-gray-700 px-4 py-2 border">Llave Derecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for token in tokens %}
+                        <tr class="border-gray-700 border-t">
+                            <td class="px-4 py-2">{{ token.value }}</td>
+                            <td class="px-4 py-2">{{ 'X' if token.type in ['FOR', 'VAR', 'CONSOLE', 'LOG', 'GLOBAL','INT','SYSTEM','PRINTLN','OUT'] else '' }}</td>
+                            <td class="px-4 py-2">{{ 'X' if token.type == 'ID' else '' }}</td>
+                            <td class="px-4 py-2">{{ 'X' if token.type == 'NUMBER' else '' }}</td>
+                            <td class="px-4 py-2">{{ 'X' if token.type in ['PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'ASSIGN', 'LT', 'LE', 'GT', 'GE', 'EQ', 'NE', 'DOT', 'SEMICOLON', 'COMMA', 'SINGLE_QUOTE'] else '' }}</td>
+                            <td class="px-4 py-2">{{ 'X' if token.type == 'LPAREN' else '' }}</td>
+                            <td class="px-4 py-2">{{ 'X' if token.type == 'RPAREN' else '' }}</td>
+                            <td class="px-4 py-2">{{ 'X' if token.type == 'LBRACE' else '' }}</td>
+                            <td class="px-4 py-2">{{ 'X' if token.type == 'RBRACE' else '' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="bg-gray-800 p-4 rounded AS">
+                <h2 class="mb-4 font-bold text-2xl">Análisis Semántico</h2>
+                <p>{{ semantic_result }}</p>
+            </div>
+        </div>
+        <div class="bg-gray-800 mt-6 p-4 rounded">
+            <h2 class="mb-4 font-bold text-2xl">Conteo de Elementos</h2>
+            <table class="border-collapse w-full text-left">
+                <thead>
+                    <tr>
+                        <th class="border-gray-700 px-4 py-2 border">Palabras reservadas</th>
+                        <th class="border-gray-700 px-4 py-2 border">Identificadores</th>
+                        <th class="border-gray-700 px-4 py-2 border">Números</th>
+                        <th class="border-gray-700 px-4 py-2 border">Símbolos</th>
+                        <th class="border-gray-700 px-4 py-2 border">Paréntesis izquierdos</th>
+                        <th class="border-gray-700 px-4 py-2 border">Paréntesis derechos</th>
+                        <th class="border-gray-700 px-4 py-2 border">Llaves izquierdas</th>
+                        <th class="border-gray-700 px-4 py-2 border">Llaves derechas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-gray-700 border-t">
+                        <td class="px-4 py-2">{{ counts.reserved }}</td>
+                        <td class="px-4 py-2">{{ counts.id }}</td>
+                        <td class="px-4 py-2">{{ counts.number }}</td>
+                        <td class="px-4 py-2">{{ counts.symbol }}</td>
+                        <td class="px-4 py-2">{{ counts.lparen }}</td>
+                        <td class="px-4 py-2">{{ counts.rparen }}</td>
+                        <td class="px-4 py-2">{{ counts.lbrace }}</td>
+                        <td class="px-4 py-2">{{ counts.rbrace }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
